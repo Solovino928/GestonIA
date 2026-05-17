@@ -148,7 +148,8 @@ th small {
     margin-top: 15px;
 }
 
-.input-area input {
+.input-area input,
+.input-area textarea {
     flex: 1;
     padding: 12px;
     border: 1px solid #334155;
@@ -156,6 +157,8 @@ th small {
     color: white;
     border-radius: 10px;
     font-size: 16px;
+    resize: vertical;
+    min-height: 80px;
 }
 
 .input-area button {
