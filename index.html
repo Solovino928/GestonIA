@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contador Bot - Gestión de Nómina</title>
+    <link rel="stylesheet" href="syle.ccs">
+</head>
+<body>
+
+    <div class="calculator-container">
+        <h1>Calculadora Comparativa de Sueldos</h1>
+
+        <div class="form-group">
+            <div class="input-field">
+                <label for="sueldo-bruto-input">Sueldo Bruto Inicial (Mensual):</label>
+                <input type="number" id="sueldo-bruto-input" value="18200" step="100">
+            </div>
+            <div class="input-field">
+                <label for="aumento-input">Cantidad a Aumentar / Bono:</label>
+                <input type="number" id="aumento-input" value="4004" step="100">
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Concepto</th>
+                        <th>Escenario 1<br><small>(Salario Inicial)</small></th>
+                        <th>Escenario 2<br><small>(Aumento Directo)</small></th>
+                        <th>Escenario 3<br><small>(Optimizado Fiscal)</small></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Sueldo Bruto Base</strong></td>
+                        <td id="e1-sb">$18,200.00</td>
+                        <td id="e2-sb">$22,204.00</td>
+                        <td id="e3-sb">$18,200.00</td>
+                    </tr>
+                    <tr>
+                        <td>Vales de Despensa</td>
+                        <td id="e1-vales">$0.00</td>
+                        <td id="e2-vales">$0.00</td>
+                        <td id="e3-vales">$1,374.00</td>
+                    </tr>
+                    <tr>
+                        <td>Fondo de Ahorro</td>
+                        <td id="e1-fondo">$0.00</td>
+                        <td id="e2-fondo">$0.00</td>
+                        <td id="e3-fondo">$2,630.00</td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td><strong>Sueldo Bruto Total</strong></td>
+                        <td id="e1-total-s">$18,200.00</td>
+                        <td id="e2-total-s">$22,204.00</td>
+                        <td id="e3-total-s">$22,204.00</td>
+                    </tr>
+                    <tr class="section-title">
+                        <td colspan="4">Deducciones</td>
+                    </tr>
+                    <tr>
+                        <td>* ISR (Aproximado)</td>
+                        <td id="e1-isr">$2,261.51</td>
+                        <td id="e2-isr">$3,126.00</td>
+                        <td id="e3-isr">$2,261.51</td>
+                    </tr>
+                    <tr>
+                        <td>* IMSS Obrero (1.63%)</td>
+                        <td id="e1-imss">$305.76</td>
+                        <td id="e2-imss">$373.03</td>
+                        <td id="e3-imss">$305.76</td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td><strong>Suma de Deducciones</strong></td>
+                        <td id="e1-suma-ded">$2,567.27</td>
+                        <td id="e2-suma-ded">$3,499.03</td>
+                        <td id="e3-suma-ded">$2,567.27</td>
+                    </tr>
+                    <tr class="neto-row">
+                        <td><strong>Sueldo Neto</strong></td>
+                        <td id="e1-neto">$15,632.73</td>
+                        <td id="e2-neto">$18,704.97</td>
+                        <td id="e3-neto">$19,636.73</td>
+                    </tr>
+                    <tr class="patronal-row">
+                        <td>Cuota IMSS Patronal (14%)</td>
+                        <td id="e1-patronal">$2,548.00</td>
+                        <td id="e2-patronal">$3,108.56</td>
+                        <td id="e3-patronal">$2,548.00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <hr class="separator">
+
+    <div class="chat-container">
+        <h1>GestionIA</h1>
+        <div id="chat-box"></div>
+        <div class="input-area">
+            <textarea id="user-input" rows="4" placeholder="Escribe tu mensaje. Presiona Ctrl+Enter para enviar..."></textarea>
+            <button type="button" onclick="sendMessage()">Enviar</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
