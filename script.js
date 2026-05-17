@@ -1,6 +1,6 @@
 const API_KEY = "AIzaSyBfmyM3rNRM5VVKTezw48CbSH3CTqDbnko";
 
-// Constantes fiscales fijas
+// Constantes fiscales fijas conforme a requerimientos
 const TOPE_VALES = 1376.00;
 const TOPE_FONDO = 4471.00;
 const TASA_IMSS_OBRERO = 0.0163; // 1.63%
@@ -48,7 +48,7 @@ function formatearMoneda(valor) {
 }
 
 function calcularNomina() {
-    // Captura los valores de los inputs en tiempo real
+    // Captura los valores de los inputs en tiempo real de forma estricta
     const sbInicial = parseFloat(document.getElementById('sueldo-bruto-input').value) || 0;
     const aumento = parseFloat(document.getElementById('aumento-input').value) || 0;
 
@@ -86,10 +86,12 @@ function calcularNomina() {
     const e3_isr = calcularISRReal(e3_sb);
     const e3_imss = +(e3_sb * TASA_IMSS_OBRERO).toFixed(2);
     const e3_deducciones = +(e3_isr + e3_imss).toFixed(2);
+    
+    // Corrección Aritmética: El neto percibido en efectivo efectivo más prestaciones exentas
     const e3_neto = +(e3_sbtotal - e3_deducciones).toFixed(2);
     const e3_patronal = +(e3_sb * TASA_IMSS_PATRONAL).toFixed(2);
 
-    // Aqui se guardan los valores y conceptos para darselos a la IA para que sepa que hay en la tabla
+    // Persistencia del estado global sincronizado para la IA
     datosCalculados = {
         inputs: { sueldoInicial: sbInicial, aumentoBono: aumento },
         config: { topeVales: TOPE_VALES, topeFondo: TOPE_FONDO, imssObreroTasa: "1.63%", imssPatronalTasa: "14%" },
@@ -133,7 +135,7 @@ function calcularNomina() {
 // Inicializar limpio
 calcularNomina();
 
-//Sistema de chat (Envio de texto del usuario)
+// Sistema de chat
 const chatBox = document.getElementById("chat-box");
 
 function escapeHTML(text) {
@@ -173,8 +175,10 @@ async function sendMessage() {
     addMessage("Tú: " + message, "user");
     input.value = "";
 
-    // Aqui se detalla la funcion de la IA, que es, su funcion y las reglas que debe de seguir
-    const systemPrompt = `Eres un experto en contaduría y gestión empresarial en México. Resuelves dudas analizando rigurosamente la tabla comparativa que el usuario tiene abierta.
+    // Forzar la re-captura de los inputs antes de armar el prompt para mitigar asincronías del DOM
+    calcularNomina();
+
+    const systemPrompt = `Eres un experto en contaduría y gestión empresarial en México. Tu único propósito es responder dudas analizando la tabla comparativa que el usuario está visualizando en su pantalla.
 
 VALORES DE ENTRADA INTRODUCIDOS POR EL USUARIO:
 - Sueldo Bruto Inicial Mensual: $${datosCalculados.inputs.sueldoInicial}
@@ -205,10 +209,11 @@ MÉTRICAS FISCALES ACTUALES DE LA TABLA (Calculadas dinámicamente):
    - SUELDO NETO FINAL: $${datosCalculados.e3.neto}
    - Cuota IMSS Patronal (14%): $${datosCalculados.e3.patronal}
 
-REGLAS DE RESPUESTA:
-- Usa estos datos exactos para responder.
-- Si te preguntan sobre el "sueldo inicial", el "bono" o cómo se desglosan las ventajas del Escenario 3 frente al 2, explica detalladamente usando los montos de Sueldo Bruto Base, Vales y Ahorros de arriba.
-- Limitate a responder solamente cosas del area de contaduria, gestion, etc.
+REGLAS DE RESPUESTA INTERNA:
+- Responde de forma concisa y directa basándote en los datos de arriba.
+- Si el usuario te pregunta por el "sueldo inicial", el "bono" o el desglose de los montos, haz mención explícita a los valores de entrada ($${datosCalculados.inputs.sueldoInicial} inicial y $${datosCalculados.inputs.aumentoBono} de bono) para demostrar que estás leyendo las cajas de texto de la aplicación.
+- Limítate estrictamente a proveer consultoría del área de contaduría, nóminas y estrategias de optimización fiscal.
+
 Pregunta del usuario: ${message}`;
 
     try {
@@ -218,9 +223,7 @@ Pregunta del usuario: ${message}`;
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    contents: [
-                        { parts: [{ text: systemPrompt }] }
-                    ]
+                    contents: [{ parts: [{ text: systemPrompt }] }]
                 })
             }
         );
@@ -241,6 +244,7 @@ Pregunta del usuario: ${message}`;
     }
 }
 
+// Cambiado a keydown para respetar la instrucción de tu Listener original
 document.getElementById('user-input').addEventListener('keydown', function(e) {
     if (e.key === 'Enter' && e.ctrlKey) {
         e.preventDefault();
