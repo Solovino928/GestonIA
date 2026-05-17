@@ -89,7 +89,7 @@ function calcularNomina() {
     const e3_neto = +(e3_sbtotal - e3_deducciones).toFixed(2);
     const e3_patronal = +(e3_sb * TASA_IMSS_PATRONAL).toFixed(2);
 
-    // Aqui se guardan los valores y conceptos para darselos a la IA para que sepa que hay en la tabla
+    // GUARDADO COMPLETO: Guardamos absolutamente todos los conceptos calculados para la IA
     datosCalculados = {
         inputs: { sueldoInicial: sbInicial, aumentoBono: aumento },
         config: { topeVales: TOPE_VALES, topeFondo: TOPE_FONDO, imssObreroTasa: "1.63%", imssPatronalTasa: "14%" },
@@ -133,34 +133,13 @@ function calcularNomina() {
 // Inicializar limpio
 calcularNomina();
 
-//Sistema de chat (Envio de texto del usuario)
+// --- SISTEMA DEL CHAT CON ENVIÓ DE CONTEXTO EXPANDIDO ---
 const chatBox = document.getElementById("chat-box");
-
-function escapeHTML(text) {
-    return text
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
-}
-
-function formatChatText(text) {
-    let result = escapeHTML(text);
-    result = result
-        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-        .replace(/\b(?:https?:\/\/|www\.)[^\s<]+/gi, function(url) {
-            const href = url.startsWith('http') ? url : 'https://' + url;
-            return `<a href="${href}" target="_blank" rel="noopener noreferrer">${url}</a>`;
-        })
-        .replace(/\r?\n/g, "<br>");
-    return result;
-}
 
 function addMessage(text, sender) {
     const div = document.createElement("div");
     div.classList.add("message", sender);
-    div.innerHTML = formatChatText(text);
+    div.innerText = text;
     chatBox.appendChild(div);
     chatBox.scrollTop = chatBox.scrollHeight;
 }
@@ -173,7 +152,7 @@ async function sendMessage() {
     addMessage("Tú: " + message, "user");
     input.value = "";
 
-    // Aqui se detalla la funcion de la IA, que es, su funcion y las reglas que debe de seguir
+    // CONTEXTO INTEGRAL: Aquí mapeamos explícitamente cada fila de la calculadora para que el modelo lo entienda todo
     const systemPrompt = `Eres un experto en contaduría y gestión empresarial en México. Resuelves dudas analizando rigurosamente la tabla comparativa que el usuario tiene abierta.
 
 VALORES DE ENTRADA INTRODUCIDOS POR EL USUARIO:
@@ -208,7 +187,7 @@ MÉTRICAS FISCALES ACTUALES DE LA TABLA (Calculadas dinámicamente):
 REGLAS DE RESPUESTA:
 - Usa estos datos exactos para responder.
 - Si te preguntan sobre el "sueldo inicial", el "bono" o cómo se desglosan las ventajas del Escenario 3 frente al 2, explica detalladamente usando los montos de Sueldo Bruto Base, Vales y Ahorros de arriba.
-- Limitate a responder solamente cosas del area de contaduria, gestion, etc.
+
 Pregunta del usuario: ${message}`;
 
     try {
@@ -241,9 +220,6 @@ Pregunta del usuario: ${message}`;
     }
 }
 
-document.getElementById('user-input').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' && e.ctrlKey) {
-        e.preventDefault();
-        sendMessage();
-    }
+document.getElementById('user-input').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') sendMessage();
 });
