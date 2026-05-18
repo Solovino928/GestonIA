@@ -1,4 +1,4 @@
-const API_KEY = "AIzaSyCxZLKIdPtwKaVCPzyHuaVXLvaO2e9DWtk";
+const API_KEY = "AIzaSyAojmwbw6s-uDz-upnVBhYqxkmxkp4N75U";
 
 // Constantes fiscales fijas conforme a requerimientos
 const TOPE_VALES = 1376.00;
