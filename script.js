@@ -1,18 +1,15 @@
 const API_KEY = "AIzaSyAojmwbw6s-uDz-upnVBhYqxkmxkp4N75U";
 
-// Constantes fiscales fijas conforme a requerimientos
 const TOPE_VALES = 1376.00;
 const TOPE_FONDO = 4471.00;
-const TASA_IMSS_OBRERO = 0.0163; // 1.63%
-const TASA_IMSS_PATRONAL = 0.14; // 14%
+const TASA_IMSS_OBRERO = 0.0163;
+const TASA_IMSS_PATRONAL = 0.14;
 
 let datosCalculados = {};
 
-// Asignamos los escuchadores de eventos
 document.getElementById('sueldo-bruto-input').addEventListener('input', calcularNomina);
 document.getElementById('aumento-input').addEventListener('input', calcularNomina);
 
-// Tarifas de ISR mensuales oficiales
 const TABLA_ISR_MENSUAL = [
     { limiteInferior: 0.01,   limiteSuperior: 844.59,   cuotaFija: 0.00,     porcentaje: 1.92 },
     { limiteInferior: 844.60,  limiteSuperior: 7168.51,  cuotaFija: 16.22,    porcentaje: 6.40 },
@@ -51,7 +48,7 @@ function calcularNomina() {
     const sbInicial = parseFloat(document.getElementById('sueldo-bruto-input').value) || 0;
     const aumento = parseFloat(document.getElementById('aumento-input').value) || 0;
 
-    // --- ESCENARIO 1 ---
+    // ESCENARIO 1
     const e1_sb = sbInicial;
     const e1_vales = 0;
     const e1_fondo = 0;
@@ -62,7 +59,7 @@ function calcularNomina() {
     const e1_neto = +(e1_sbtotal - e1_deducciones).toFixed(2);
     const e1_patronal = +(e1_sb * TASA_IMSS_PATRONAL).toFixed(2);
 
-    // --- ESCENARIO 2 ---
+    // ESCENARIO 2
     const e2_sb = sbInicial + aumento;
     const e2_vales = 0;
     const e2_fondo = 0;
@@ -73,7 +70,7 @@ function calcularNomina() {
     const e2_neto = +(e2_sbtotal - e2_deducciones).toFixed(2);
     const e2_patronal = +(e2_sb * TASA_IMSS_PATRONAL).toFixed(2);
 
-    // --- ESCENARIO 3 ---
+    // ESCENARIO 3
     let restoAumento = aumento;
     const e3_vales = Math.min(restoAumento, TOPE_VALES);
     restoAumento -= e3_vales;
@@ -88,24 +85,22 @@ function calcularNomina() {
     const e3_neto = +(e3_sbtotal - e3_deducciones).toFixed(2);
     const e3_patronal = +(e3_sb * TASA_IMSS_PATRONAL).toFixed(2);
 
-    // --- CÁLCULO DE DIFERENCIAS EXCLUSIVO DESDE DEDUCCIONES (Escenario 2 vs Escenario 3) ---
+    // DIFERENCIAS EXCLUSIVAS DE DEDUCCIONES (Escenario 2 vs Escenario 3)
     const dif_isr = +(e2_isr - e3_isr).toFixed(2);
     const dif_imss = +(e2_imss - e3_imss).toFixed(2);
     const dif_deducciones = +(e2_deducciones - e3_deducciones).toFixed(2);
     const dif_patronal = +(e2_patronal - e3_patronal).toFixed(2);
     const dif_neto = +(e3_neto - e2_neto).toFixed(2);
 
-    // Persistencia del estado global sincronizado para la IA
     datosCalculados = {
         inputs: { sueldoInicial: sbInicial, aumentoBono: aumento },
-        config: { topeVales: TOPE_VALES, topeFondo: TOPE_FONDO, imssObreroTasa: "1.63%", imssPatronalTasa: "14%" },
         diferencias: { isr: dif_isr, imss: dif_imss, totalDeducciones: dif_deducciones, neto: dif_neto, patronal: dif_patronal },
         e1: { sbBase: e1_sb, vales: e1_vales, fondo: e1_fondo, sbTotal: e1_sbtotal, isr: e1_isr, imss: e1_imss, deducciones: e1_deducciones, neto: e1_neto, patronal: e1_patronal },
         e2: { sbBase: e2_sb, vales: e2_vales, fondo: e2_fondo, sbTotal: e2_sbtotal, isr: e2_isr, imss: e2_imss, deducciones: e2_deducciones, neto: e2_neto, patronal: e2_patronal },
         e3: { sbBase: e3_sb, vales: e3_vales, fondo: e3_fondo, sbTotal: e3_sbtotal, isr: e3_isr, imss: e3_imss, deducciones: e3_deducciones, neto: e3_neto, patronal: e3_patronal }
     };
 
-    // Renderizado Escenario 1
+    // Render E1
     document.getElementById('e1-sb').innerText = formatearMoneda(e1_sb);
     document.getElementById('e1-vales').innerText = formatearMoneda(e1_vales);
     document.getElementById('e1-fondo').innerText = formatearMoneda(e1_fondo);
@@ -116,7 +111,7 @@ function calcularNomina() {
     document.getElementById('e1-neto').innerText = formatearMoneda(e1_neto);
     document.getElementById('e1-patronal').innerText = formatearMoneda(e1_patronal);
 
-    // Renderizado Escenario 2
+    // Render E2
     document.getElementById('e2-sb').innerText = formatearMoneda(e2_sb);
     document.getElementById('e2-vales').innerText = formatearMoneda(e2_vales);
     document.getElementById('e2-fondo').innerText = formatearMoneda(e2_fondo);
@@ -127,7 +122,7 @@ function calcularNomina() {
     document.getElementById('e2-neto').innerText = formatearMoneda(e2_neto);
     document.getElementById('e2-patronal').innerText = formatearMoneda(e2_patronal);
 
-    // Renderizado Escenario 3
+    // Render E3
     document.getElementById('e3-sb').innerText = formatearMoneda(e3_sb);
     document.getElementById('e3-vales').innerText = formatearMoneda(e3_vales);
     document.getElementById('e3-fondo').innerText = formatearMoneda(e3_fondo);
@@ -138,7 +133,7 @@ function calcularNomina() {
     document.getElementById('e3-neto').innerText = formatearMoneda(e3_neto);
     document.getElementById('e3-patronal').innerText = formatearMoneda(e3_patronal);
 
-    // Renderizado de la columna de Diferencias (Solo Deducciones)
+    // Render Diferencias (Solo Deducciones)
     document.getElementById('dif-isr').innerText = formatearMoneda(dif_isr);
     document.getElementById('dif-imss').innerText = formatearMoneda(dif_imss);
     document.getElementById('dif-suma-ded').innerText = formatearMoneda(dif_deducciones);
@@ -146,30 +141,17 @@ function calcularNomina() {
     document.getElementById('dif-patronal').innerText = formatearMoneda(dif_patronal);
 }
 
-// Inicializar limpio
 calcularNomina();
 
-// Sistema de chat
 const chatBox = document.getElementById("chat-box");
 
 function escapeHTML(text) {
-    return text
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
+    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
 function formatChatText(text) {
     let result = escapeHTML(text);
-    result = result
-        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-        .replace(/\b(?:https?:\/\/|www\.)[^\s<]+/gi, function(url) {
-            const href = url.startsWith('http') ? url : 'https://' + url;
-            return `<a href="${href}" target="_blank" rel="noopener noreferrer">${url}</a>`;
-        })
-        .replace(/\r?\n/g, "<br>");
+    result = result.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>").replace(/\r?\n/g, "<br>");
     return result;
 }
 
@@ -189,57 +171,24 @@ async function sendMessage() {
     addMessage("Tú: " + message, "user");
     input.value = "";
 
-    calcularNomina();
-
-    const systemPrompt = `Eres un experto en contaduría y gestión empresarial en México. Tu único propósito es responder dudas analizando la tabla comparativa que el usuario ve en pantalla.
-
-VALORES DE ENTRADA:
-- Sueldo Bruto Inicial: $${datosCalculados.inputs.sueldoInicial} | Bono/Aumento: $${datosCalculados.inputs.aumentoBono}
-
-DIFERENCIAS DIRECTAS EXCLUSIVAS DE DEDUCCIONES (ESCENARIO 2 VS ESCENARIO 3):
-- Ahorro en Retención de ISR: $${datosCalculados.diferencias.isr} menos retenido al trabajador.
-- Ahorro en IMSS Obrero: $${datosCalculados.diferencias.imss} menos retenido al trabajador.
-- Reducción total de deducciones obreras: $${datosCalculados.diferencias.totalDeducciones}
-- Ganancia Extra Neta en Efectivo (Sueldo Neto percibido): $${datosCalculados.diferencias.neto} más para el empleado.
-- Ahorro en Cuota IMSS Patronal: $${datosCalculados.diferencias.patronal} ahorrados por la empresa.
-
-MÉTRICAS COMPLETAS DE LA TABLA:
-1. ESCENARIO 1 (Base): Bruto $${datosCalculados.e1.sbBase} | ISR $${datosCalculados.e1.isr} | IMSS $${datosCalculados.e1.imss} | NETO $${datosCalculados.e1.neto} | Patronal $${datosCalculados.e1.patronal}
-2. ESCENARIO 2 (Aumento Directo): Bruto $${datosCalculados.e2.sbBase} | ISR $${datosCalculados.e2.isr} | IMSS $${datosCalculados.e2.imss} | NETO $${datosCalculados.e2.neto} | Patronal $${datosCalculados.e2.patronal}
-3. ESCENARIO 3 (Optimizado): Bruto Base $${datosCalculados.e3.sbBase} | Vales $${datosCalculados.e3.vales} | Fondo $${datosCalculados.e3.fondo} | ISR $${datosCalculados.e3.isr} | IMSS $${datosCalculados.e3.imss} | NETO $${datosCalculados.e3.neto} | Patronal $${datosCalculados.e3.patronal}
-
-REGLAS DE RESPUESTA INTERNA:
-- Responde de forma concisa basándote en los datos calculados.
-- Concéntrate en explicar los ahorros de dinero o diferencias de impuestos citando los montos (ej. El ahorro de ISR es de $${datosCalculados.diferencias.isr}).
-- Limítate estrictamente al área de contaduría y optimización fiscal.
-
+    const systemPrompt = `Eres un experto en contaduría en México. Responde de forma concisa analizando la tabla.
+Sueldo Inicial: $${datosCalculados.inputs.sueldoInicial} | Bono: $${datosCalculados.inputs.aumentoBono}
+Ahorros en Deducciones (E2 vs E3):
+- ISR: $${datosCalculados.diferencias.isr} | IMSS Obrero: $${datosCalculados.diferencias.imss}
+- Ganancia Extra Neta: $${datosCalculados.diferencias.neto} | Ahorro Patronal: $${datosCalculados.diferencias.patronal}
 Pregunta del usuario: ${message}`;
 
     try {
-        const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`,
-            {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: systemPrompt }] }]
-                })
-            }
-        );
-
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ contents: [{ parts: [{ text: systemPrompt }] }] })
+        });
         const data = await response.json();
-
-        if (data.error) {
-            addMessage("Error: " + data.error.message, "bot");
-            return;
-        }
-
         const botReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Sin respuesta";
         addMessage("Contador 👨🏻‍💼: " + botReply, "bot");
-
     } catch (error) {
-        console.error(error);
-        addMessage("Contador 👨🏻‍💼: Error al conectar con Gemini", "bot");
+        addMessage("Contador 👨🏻‍💼: Error de conexión", "bot");
     }
 }
 
