@@ -87,14 +87,17 @@ function calcularNomina() {
     const e3_imss = +(e3_sb * TASA_IMSS_OBRERO).toFixed(2);
     const e3_deducciones = +(e3_isr + e3_imss).toFixed(2);
     
-    // Corrección Aritmética: El neto percibido en efectivo efectivo más prestaciones exentas
     const e3_neto = +(e3_sbtotal - e3_deducciones).toFixed(2);
     const e3_patronal = +(e3_sb * TASA_IMSS_PATRONAL).toFixed(2);
+
+    // NUEVO: Cálculo de la diferencia a favor de la optimización fiscal (Escenario 3 vs Escenario 2)
+    const diferenciaNeta = +(e3_neto - e2_neto).toFixed(2);
 
     // Persistencia del estado global sincronizado para la IA
     datosCalculados = {
         inputs: { sueldoInicial: sbInicial, aumentoBono: aumento },
         config: { topeVales: TOPE_VALES, topeFondo: TOPE_FONDO, imssObreroTasa: "1.63%", imssPatronalTasa: "14%" },
+        diferencia: diferenciaNeta, // ◄ Guardado para enviar al bot
         e1: { sbBase: e1_sb, vales: e1_vales, fondo: e1_fondo, sbTotal: e1_sbtotal, isr: e1_isr, imss: e1_imss, deducciones: e1_deducciones, neto: e1_neto, patronal: e1_patronal },
         e2: { sbBase: e2_sb, vales: e2_vales, fondo: e2_fondo, sbTotal: e2_sbtotal, isr: e2_isr, imss: e2_imss, deducciones: e2_deducciones, neto: e2_neto, patronal: e2_patronal },
         e3: { sbBase: e3_sb, vales: e3_vales, fondo: e3_fondo, sbTotal: e3_sbtotal, isr: e3_isr, imss: e3_imss, deducciones: e3_deducciones, neto: e3_neto, patronal: e3_patronal }
@@ -130,6 +133,12 @@ function calcularNomina() {
     document.getElementById('e3-suma-ded').innerText = formatearMoneda(e3_deducciones);
     document.getElementById('e3-neto').innerText = formatearMoneda(e3_neto);
     document.getElementById('e3-patronal').innerText = formatearMoneda(e3_patronal);
+
+    // NUEVO: Renderizado del monto de diferencia en el contenedor dinámico de la pantalla
+    const elementoDiferencia = document.getElementById('diferencia-neto');
+    if (elementoDiferencia) {
+        elementoDiferencia.innerText = formatearMoneda(diferenciaNeta);
+    }
 }
 
 // Inicializar limpio
@@ -178,11 +187,15 @@ async function sendMessage() {
     // Forzar la re-captura de los inputs antes de armar el prompt para mitigar asincronías del DOM
     calcularNomina();
 
-    const systemPrompt = `Eres un experto en contaduría y gestión empresarial en México. Tu único propósito es responder dudas analizando la tabla comparativa que el usuario está visualizando en su pantalla.
+    // NUEVO: Se integró el bloque de 'DIFERENCIA Y BENEFICIO FISCAL' para entrenar las respuestas de Gemini con el dato exacto
+    const systemPrompt = `Eres un expert en contaduría y gestión empresarial en México. Tu único propósito es responder dudas analizando la tabla comparativa que el usuario está visualizando en su pantalla.
 
 VALORES DE ENTRADA INTRODUCIDOS POR EL USUARIO:
 - Sueldo Bruto Inicial Mensual: $${datosCalculados.inputs.sueldoInicial}
 - Cantidad a Aumentar / Bono: $${datosCalculados.inputs.aumentoBono}
+
+DIFERENCIA Y BENEFICIO FISCAL:
+- El Escenario 3 (Optimizado) genera una ganancia extra de bolsillo de $${datosCalculados.diferencia} mensuales en comparación con el Escenario 2 (Aumento Directo) debido a la exención legal de ISR e IMSS en vales y fondo de ahorro.
 
 MÉTRICAS FISCALES ACTUALES DE LA TABLA (Calculadas dinámicamente):
 1. ESCENARIO 1 (Salario Inicial Base):
@@ -211,7 +224,7 @@ MÉTRICAS FISCALES ACTUALES DE LA TABLA (Calculadas dinámicamente):
 
 REGLAS DE RESPUESTA INTERNA:
 - Responde de forma concisa y directa basándote en los datos de arriba.
-- Si el usuario te pregunta por el "sueldo inicial", el "bono" o el desglose de los montos, haz mención explícita a los valores de entrada ($${datosCalculados.inputs.sueldoInicial} inicial y $${datosCalculados.inputs.aumentoBono} de bono) para demostrar que estás leyendo las cajas de texto de la aplicación.
+- Si el usuario te pregunta por el "sueldo inicial", el "bono", el "ahorro" o la "diferencia entre escenarios", haz mención explícita a los valores correspondientes para demostrar consistencia con la aplicación.
 - Limítate estrictamente a proveer consultoría del área de contaduría, nóminas y estrategias de optimización fiscal.
 
 Pregunta del usuario: ${message}`;
@@ -244,7 +257,6 @@ Pregunta del usuario: ${message}`;
     }
 }
 
-// Cambiado a keydown para respetar la instrucción de tu Listener original
 document.getElementById('user-input').addEventListener('keydown', function(e) {
     if (e.key === 'Enter' && e.ctrlKey) {
         e.preventDefault();
