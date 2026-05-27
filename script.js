@@ -48,7 +48,6 @@ function formatearMoneda(valor) {
 }
 
 function calcularNomina() {
-    // Captura los valores de los inputs en tiempo real de forma estricta
     const sbInicial = parseFloat(document.getElementById('sueldo-bruto-input').value) || 0;
     const aumento = parseFloat(document.getElementById('aumento-input').value) || 0;
 
@@ -86,24 +85,33 @@ function calcularNomina() {
     const e3_isr = calcularISRReal(e3_sb);
     const e3_imss = +(e3_sb * TASA_IMSS_OBRERO).toFixed(2);
     const e3_deducciones = +(e3_isr + e3_imss).toFixed(2);
-    
     const e3_neto = +(e3_sbtotal - e3_deducciones).toFixed(2);
     const e3_patronal = +(e3_sb * TASA_IMSS_PATRONAL).toFixed(2);
 
-    // NUEVO: Cálculo de la diferencia a favor de la optimización fiscal (Escenario 3 vs Escenario 2)
-    const diferenciaNeta = +(e3_neto - e2_neto).toFixed(2);
+    // --- CÁLCULO DE DIFERENCIAS (Escenario 2 vs Escenario 3) ---
+    // En impuestos/costos: E2 - E3 positivo representa ahorro (menos dinero pagado)
+    const dif_sb = +(e2_sb - e3_sb).toFixed(2);
+    const dif_vales = +(e2_vales - e3_vales).toFixed(2);
+    const dif_fondo = +(e2_fondo - e3_fondo).toFixed(2);
+    const dif_sbtotal = +(e2_sbtotal - e3_sbtotal).toFixed(2);
+    const dif_isr = +(e2_isr - e3_isr).toFixed(2);
+    const dif_imss = +(e2_imss - e3_imss).toFixed(2);
+    const dif_deducciones = +(e2_deducciones - e3_deducciones).toFixed(2);
+    const dif_patronal = +(e2_patronal - e3_patronal).toFixed(2);
+    // En neto: E3 - E2 representa el dinero extra libre que se queda el trabajador
+    const dif_neto = +(e3_neto - e2_neto).toFixed(2);
 
     // Persistencia del estado global sincronizado para la IA
     datosCalculados = {
         inputs: { sueldoInicial: sbInicial, aumentoBono: aumento },
         config: { topeVales: TOPE_VALES, topeFondo: TOPE_FONDO, imssObreroTasa: "1.63%", imssPatronalTasa: "14%" },
-        diferencia: diferenciaNeta, // ◄ Guardado para enviar al bot
+        diferencias: { sb: dif_sb, vales: dif_vales, fondo: dif_fondo, isr: dif_isr, imss: dif_imss, totalDeducciones: dif_deducciones, neto: dif_neto, patronal: dif_patronal },
         e1: { sbBase: e1_sb, vales: e1_vales, fondo: e1_fondo, sbTotal: e1_sbtotal, isr: e1_isr, imss: e1_imss, deducciones: e1_deducciones, neto: e1_neto, patronal: e1_patronal },
         e2: { sbBase: e2_sb, vales: e2_vales, fondo: e2_fondo, sbTotal: e2_sbtotal, isr: e2_isr, imss: e2_imss, deducciones: e2_deducciones, neto: e2_neto, patronal: e2_patronal },
         e3: { sbBase: e3_sb, vales: e3_vales, fondo: e3_fondo, sbTotal: e3_sbtotal, isr: e3_isr, imss: e3_imss, deducciones: e3_deducciones, neto: e3_neto, patronal: e3_patronal }
     };
 
-    // Renderizado en la interfaz HTML
+    // Renderizado Escenario 1
     document.getElementById('e1-sb').innerText = formatearMoneda(e1_sb);
     document.getElementById('e1-vales').innerText = formatearMoneda(e1_vales);
     document.getElementById('e1-fondo').innerText = formatearMoneda(e1_fondo);
@@ -114,6 +122,7 @@ function calcularNomina() {
     document.getElementById('e1-neto').innerText = formatearMoneda(e1_neto);
     document.getElementById('e1-patronal').innerText = formatearMoneda(e1_patronal);
 
+    // Renderizado Escenario 2
     document.getElementById('e2-sb').innerText = formatearMoneda(e2_sb);
     document.getElementById('e2-vales').innerText = formatearMoneda(e2_vales);
     document.getElementById('e2-fondo').innerText = formatearMoneda(e2_fondo);
@@ -124,6 +133,7 @@ function calcularNomina() {
     document.getElementById('e2-neto').innerText = formatearMoneda(e2_neto);
     document.getElementById('e2-patronal').innerText = formatearMoneda(e2_patronal);
 
+    // Renderizado Escenario 3
     document.getElementById('e3-sb').innerText = formatearMoneda(e3_sb);
     document.getElementById('e3-vales').innerText = formatearMoneda(e3_vales);
     document.getElementById('e3-fondo').innerText = formatearMoneda(e3_fondo);
@@ -134,10 +144,21 @@ function calcularNomina() {
     document.getElementById('e3-neto').innerText = formatearMoneda(e3_neto);
     document.getElementById('e3-patronal').innerText = formatearMoneda(e3_patronal);
 
-    // NUEVO: Renderizado del monto de diferencia en el contenedor dinámico de la pantalla
-    const elementoDiferencia = document.getElementById('diferencia-neto');
-    if (elementoDiferencia) {
-        elementoDiferencia.innerText = formatearMoneda(diferenciaNeta);
+    // Renderizado de la columna de Diferencias Dinámicas
+    document.getElementById('dif-sb').innerText = formatearMoneda(dif_sb);
+    document.getElementById('dif-vales').innerText = formatearMoneda(Math.abs(dif_vales)); // Despliegue absoluto para coherencia visual
+    document.getElementById('dif-fondo').innerText = formatearMoneda(Math.abs(dif_fondo));
+    document.getElementById('dif-total-s').innerText = formatearMoneda(dif_sbtotal);
+    document.getElementById('dif-isr').innerText = formatearMoneda(dif_isr);
+    document.getElementById('dif-imss').innerText = formatearMoneda(dif_imss);
+    document.getElementById('dif-suma-ded').innerText = formatearMoneda(dif_deducciones);
+    document.getElementById('dif-neto').innerText = formatearMoneda(dif_neto);
+    document.getElementById('dif-patronal').innerText = formatearMoneda(dif_patronal);
+
+    // Renderizado de la tarjeta informativa inferior
+    const elementoCard = document.getElementById('diferencia-neto-card');
+    if (elementoCard) {
+        elementoCard.innerText = formatearMoneda(dif_neto);
     }
 }
 
@@ -184,48 +205,29 @@ async function sendMessage() {
     addMessage("Tú: " + message, "user");
     input.value = "";
 
-    // Forzar la re-captura de los inputs antes de armar el prompt para mitigar asincronías del DOM
     calcularNomina();
 
-    // NUEVO: Se integró el bloque de 'DIFERENCIA Y BENEFICIO FISCAL' para entrenar las respuestas de Gemini con el dato exacto
-    const systemPrompt = `Eres un expert en contaduría y gestión empresarial en México. Tu único propósito es responder dudas analizando la tabla comparativa que el usuario está visualizando en su pantalla.
+    const systemPrompt = `Eres un experto en contaduría y gestión empresarial en México. Tu único propósito es responder dudas analizando la tabla comparativa que el usuario ve en pantalla.
 
-VALORES DE ENTRADA INTRODUCIDOS POR EL USUARIO:
-- Sueldo Bruto Inicial Mensual: $${datosCalculados.inputs.sueldoInicial}
-- Cantidad a Aumentar / Bono: $${datosCalculados.inputs.aumentoBono}
+VALORES DE ENTRADA:
+- Sueldo Bruto Inicial: $${datosCalculados.inputs.sueldoInicial} | Bono/Aumento: $${datosCalculados.inputs.aumentoBono}
 
-DIFERENCIA Y BENEFICIO FISCAL:
-- El Escenario 3 (Optimizado) genera una ganancia extra de bolsillo de $${datosCalculados.diferencia} mensuales en comparación con el Escenario 2 (Aumento Directo) debido a la exención legal de ISR e IMSS en vales y fondo de ahorro.
+DIFERENCIAS DIRECTAS (AHORROS CALCULADOS ENTRE ESCENARIO 2 Y ESCENARIO 3):
+- Ahorro en Retención de ISR: $${datosCalculados.diferencias.isr} menos retenido al trabajador.
+- Ahorro en IMSS Obrero: $${datosCalculados.diferencias.imss} menos retenido al trabajador.
+- Reducción total de deducciones: $${datosCalculados.diferencias.totalDeducciones}
+- Ganancia Extra Neta en Efectivo (Sueldo Neto): $${datosCalculados.diferencias.neto} más para el empleado.
+- Ahorro en Cuota IMSS Patronal: $${datosCalculados.diferencias.patronal} ahorrados por la empresa.
 
-MÉTRICAS FISCALES ACTUALES DE LA TABLA (Calculadas dinámicamente):
-1. ESCENARIO 1 (Salario Inicial Base):
-   - Sueldo Bruto Base: $${datosCalculados.e1.sbBase} | Vales: $${datosCalculados.e1.vales} | Fondo de Ahorro: $${datosCalculados.e1.fondo}
-   - Sueldo Bruto Total: $${datosCalculados.e1.sbTotal}
-   - Retenciones: ISR: $${datosCalculados.e1.isr} , IMSS Obrero (1.63%): $${datosCalculados.e1.imss}
-   - Suma Deducciones: $${datosCalculados.e1.deducciones}
-   - SUELDO NETO FINAL: $${datosCalculados.e1.neto}
-   - Cuota IMSS Patronal (14%): $${datosCalculados.e1.patronal}
-
-2. ESCENARIO 2 (Aumento Directo al Bruto):
-   - Sueldo Bruto Base: $${datosCalculados.e2.sbBase} | Vales: $${datosCalculados.e2.vales} | Fondo de Ahorro: $${datosCalculados.e2.fondo}
-   - Sueldo Bruto Total: $${datosCalculados.e2.sbTotal}
-   - Retenciones: ISR: $${datosCalculados.e2.isr} , IMSS Obrero (1.63%): $${datosCalculados.e2.imss}
-   - Suma Deducciones: $${datosCalculados.e2.deducciones}
-   - SUELDO NETO FINAL: $${datosCalculados.e2.neto}
-   - Cuota IMSS Patronal (14%): $${datosCalculados.e2.patronal}
-
-3. ESCENARIO 3 (Optimizado Fiscal con Vales y Fondo):
-   - Sueldo Bruto Base: $${datosCalculados.e3.sbBase} | Vales (Exentos): $${datosCalculados.e3.vales} | Fondo de Ahorro (Exento): $${datosCalculados.e3.fondo}
-   - Sueldo Bruto Total: $${datosCalculados.e3.sbTotal}
-   - Retenciones: ISR: $${datosCalculados.e3.isr} , IMSS Obrero (1.63%): $${datosCalculados.e3.imss}
-   - Suma Deducciones: $${datosCalculados.e3.deducciones}
-   - SUELDO NETO FINAL: $${datosCalculados.e3.neto}
-   - Cuota IMSS Patronal (14%): $${datosCalculados.e3.patronal}
+MÉTRICAS COMPLETAS DE LA TABLA:
+1. ESCENARIO 1 (Base): Bruto $${datosCalculados.e1.sbBase} | ISR $${datosCalculados.e1.isr} | IMSS $${datosCalculados.e1.imss} | NETO $${datosCalculados.e1.neto} | Patronal $${datosCalculados.e1.patronal}
+2. ESCENARIO 2 (Aumento Directo): Bruto $${datosCalculados.e2.sbBase} | ISR $${datosCalculados.e2.isr} | IMSS $${datosCalculados.e2.imss} | NETO $${datosCalculados.e2.neto} | Patronal $${datosCalculados.e2.patronal}
+3. ESCENARIO 3 (Optimizado): Bruto Base $${datosCalculados.e3.sbBase} | Vales $${datosCalculados.e3.vales} | Fondo $${datosCalculados.e3.fondo} | ISR $${datosCalculados.e3.isr} | IMSS $${datosCalculados.e3.imss} | NETO $${datosCalculados.e3.neto} | Patronal $${datosCalculados.e3.patronal}
 
 REGLAS DE RESPUESTA INTERNA:
-- Responde de forma concisa y directa basándote en los datos de arriba.
-- Si el usuario te pregunta por el "sueldo inicial", el "bono", el "ahorro" o la "diferencia entre escenarios", haz mención explícita a los valores correspondientes para demostrar consistencia con la aplicación.
-- Limítate estrictamente a proveer consultoría del área de contaduría, nóminas y estrategias de optimización fiscal.
+- Responde de forma concisa basándote en los datos calculados.
+- Si preguntan por ahorros o diferencias de dinero de impuestos, cita explícitamente los montos calculados (ej. El ahorro de ISR es de $${datosCalculados.diferencias.isr}).
+- Limítate estrictamente al área de contaduría y optimización fiscal.
 
 Pregunta del usuario: ${message}`;
 
