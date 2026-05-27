@@ -1,7 +1,8 @@
 const { onRequest } = require("firebase-functions/v2/https");
 const cors = require("cors")({ origin: true }); 
 
-exports.preguntarContador = onRequest({ secrets: ["GEMINI_API_KEY"] }, (req, res) => {
+// Ya no declaramos { secrets: [...] } para que corra en el plan gratis
+exports.preguntarContador = onRequest((req, res) => {
     cors(req, res, async () => {
         if (req.method !== "POST") {
             return res.status(405).send({ error: "Método no permitido" });
@@ -13,7 +14,7 @@ exports.preguntarContador = onRequest({ secrets: ["GEMINI_API_KEY"] }, (req, res
                 return res.status(400).send({ error: "Falta el prompt" });
             }
 
-            // El servidor lee la API Key guardada de forma segura
+            // Leemos la variable normal del entorno
             const apiKey = process.env.GEMINI_API_KEY;
 
             const response = await fetch(
