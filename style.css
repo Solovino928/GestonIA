@@ -261,3 +261,39 @@ th small {
 .input-area button:active {
     transform: scale(0.98);
 }
+/* Tarjeta de Beneficio de Optimización */
+.benefit-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px dashed #10b981;
+    padding: 16px 20px;
+    border-radius: 6px;
+    margin-top: 20px;
+}
+
+.benefit-icon {
+    font-size: 24px;
+}
+
+.benefit-info h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #065f46;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 2px;
+}
+
+.benefit-info p {
+    font-size: 13.5px;
+    color: #334155;
+    line-height: 1.4;
+}
+
+.benefit-info strong {
+    color: #065f46;
+    font-size: 16px;
+    font-weight: 700;
+}
