@@ -20,7 +20,7 @@ body {
    ========================================================================== */
 .calculator-container {
     width: 90%;
-    max-width: 950px; /* Ampliado ligeramente para acomodar la 4ta columna con holgura */
+    max-width: 950px; /* Ancho idóneo para acomodar la 4ta columna con holgura */
     margin: 40px auto 20px auto;
     background: #ffffff; /* Fondo blanco riguroso para la herramienta */
     padding: 30px;
@@ -176,43 +176,6 @@ th small {
     border-bottom: 2px solid #10b981;
 }
 
-/* Tarjeta informativa de Diferencia de Beneficios */
-.benefit-card {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    background: rgba(16, 185, 129, 0.08);
-    border: 1px dashed #10b981;
-    padding: 16px 20px;
-    border-radius: 6px;
-    margin-top: 20px;
-}
-
-.benefit-icon {
-    font-size: 24px;
-}
-
-.benefit-info h3 {
-    font-size: 14px;
-    font-weight: 700;
-    color: #065f46;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    margin-bottom: 2px;
-}
-
-.benefit-info p {
-    font-size: 13.5px;
-    color: #334155;
-    line-height: 1.4;
-}
-
-.benefit-info strong {
-    color: #065f46;
-    font-size: 16px;
-    font-weight: 700;
-}
-
 /* Separador de Módulos */
 .separator {
     border: 0;
@@ -224,7 +187,7 @@ th small {
 }
 
 /* ==========================================================================
-   4. Chat Container Inferior (Aspecto de Soporte Corporativo)
+   4. Chat Container Inferior (Aspecto de Soporte Original)
    ========================================================================== */
 .chat-container {
     width: 90%;
@@ -250,7 +213,7 @@ th small {
     box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.02);
 }
 
-/* Mensajes y Burbujas dentro del chat */
+/* Mensajes dentro del chat */
 .message {
     margin-bottom: 15px;
     padding: 12px 16px;
@@ -262,7 +225,7 @@ th small {
 }
 
 .message strong {
-    color: #0f766e;
+    color: #0f766e; /* Resaltados de IA en verde corporativo oscuro */
 }
 
 .message a {
@@ -270,15 +233,15 @@ th small {
     text-decoration: underline;
 }
 
-/* Burbuja del Usuario (Lado derecho) */
+/* Burbuja del Usuario: Estilo plataforma de soporte moderna */
 .user {
-    background: #0f172a;
+    background: #0f172a; /* Azul noche / Negro corporativo */
     color: #ffffff;
     margin-left: auto;
     border-bottom-right-radius: 2px;
 }
 
-/* Burbuja del Bot (Lado izquierdo) */
+/* Burbuja del Bot: Neutro e institucional */
 .bot {
     background: #f1f5f9;
     color: #334155;
@@ -287,7 +250,7 @@ th small {
     border-bottom-left-radius: 2px;
 }
 
-/* Área de Entrada y Botón de Envío */
+/* Área de Envío alineada */
 .input-area {
     display: flex;
     gap: 12px;
@@ -318,7 +281,7 @@ th small {
     height: 70px;
     border: none;
     border-radius: 6px;
-    background: #0f766e;
+    background: #0f766e; /* Botón verde teal elegante */
     color: white;
     font-size: 15px;
     font-weight: 600;
