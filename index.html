@@ -30,6 +30,7 @@
                         <th>Escenario 1<br><small>(Salario Inicial)</small></th>
                         <th>Escenario 2<br><small>(Aumento Directo)</small></th>
                         <th>Escenario 3<br><small>(Optimizado Fiscal)</small></th>
+                        <th>Diferencia<br><small>(Ahorro Real)</small></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -38,57 +39,66 @@
                         <td id="e1-sb">$18,200.00</td>
                         <td id="e2-sb">$22,204.00</td>
                         <td id="e3-sb">$18,200.00</td>
+                        <td id="dif-sb" class="dif-col">$0.00</td>
                     </tr>
                     <tr>
                         <td>Vales de Despensa</td>
                         <td id="e1-vales">$0.00</td>
                         <td id="e2-vales">$0.00</td>
                         <td id="e3-vales">$1,374.00</td>
+                        <td id="dif-vales" class="dif-col">$0.00</td>
                     </tr>
                     <tr>
                         <td>Fondo de Ahorro</td>
                         <td id="e1-fondo">$0.00</td>
                         <td id="e2-fondo">$0.00</td>
                         <td id="e3-fondo">$2,630.00</td>
+                        <td id="dif-fondo" class="dif-col">$0.00</td>
                     </tr>
                     <tr class="highlight-row">
                         <td><strong>Sueldo Bruto Total</strong></td>
                         <td id="e1-total-s">$18,200.00</td>
                         <td id="e2-total-s">$22,204.00</td>
                         <td id="e3-total-s">$22,204.00</td>
+                        <td id="dif-total-s" class="dif-col">$0.00</td>
                     </tr>
                     <tr class="section-title">
-                        <td colspan="4">Deducciones</td>
+                        <td colspan="5">Deducciones</td>
                     </tr>
                     <tr>
                         <td>* ISR (Aproximado)</td>
                         <td id="e1-isr">$2,261.51</td>
                         <td id="e2-isr">$3,126.00</td>
                         <td id="e3-isr">$2,261.51</td>
+                        <td id="dif-isr" class="dif-col Ahorro">$0.00</td>
                     </tr>
                     <tr>
                         <td>* IMSS Obrero (1.63%)</td>
                         <td id="e1-imss">$305.76</td>
                         <td id="e2-imss">$373.03</td>
                         <td id="e3-imss">$305.76</td>
+                        <td id="dif-imss" class="dif-col Ahorro">$0.00</td>
                     </tr>
                     <tr class="highlight-row">
                         <td><strong>Suma de Deducciones</strong></td>
                         <td id="e1-suma-ded">$2,567.27</td>
                         <td id="e2-suma-ded">$3,499.03</td>
                         <td id="e3-suma-ded">$2,567.27</td>
+                        <td id="dif-suma-ded" class="dif-col Ahorro">$0.00</td>
                     </tr>
                     <tr class="neto-row">
-                        <td><strong>Sueldo Neto</strong></td>
+                        <td><strong>Sueldo Neto (Percibido)</strong></td>
                         <td id="e1-neto">$15,632.73</td>
                         <td id="e2-neto">$18,704.97</td>
                         <td id="e3-neto">$19,636.73</td>
+                        <td id="dif-neto" class="dif-col beneficio-empleado">$0.00</td>
                     </tr>
                     <tr>
                         <td class="patronal-row">Cuota IMSS Patronal (14%)</td>
                         <td id="e1-patronal" class="patronal-row">$2,548.00</td>
                         <td id="e2-patronal" class="patronal-row">$3,108.56</td>
                         <td id="e3-patronal" class="patronal-row">$2,548.00</td>
+                        <td id="dif-patronal" class="dif-col patronal-row Ahorro">$0.00</td>
                     </tr>
                 </tbody>
             </table>
@@ -98,7 +108,7 @@
             <div class="benefit-icon">📈</div>
             <div class="benefit-info">
                 <h3>Diferencia a favor en Escenario Optimizado</h3>
-                <p>Al utilizar el Escenario 3 en lugar del Escenario 2, el empleado recibe una diferencia neta de <strong id="diferencia-neto">$0.00</strong> mensuales extra en su beneficio total, reduciendo la carga fiscal.</p>
+                <p>Al utilizar el Escenario 3 en lugar del Escenario 2, el empleado recibe una diferencia neta de <strong id="diferencia-neto-card">$0.00</strong> mensuales extra en su beneficio total, reduciendo la carga fiscal.</p>
             </div>
         </div>
     </div>
