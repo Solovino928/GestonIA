@@ -18,8 +18,11 @@ export default async (request, context) => {
     try {
         const { systemPrompt } = await request.json();
         
-        // Netlify leerá de forma segura tu API Key desde su panel web
-        const apiKey = Netlify.env.get("GEMINI_API_KEY");
+        // Netlify Edge Functions accede a variables de entorno a través de process.env
+        const apiKey = process.env.GEMINI_API_KEY || context.env?.GEMINI_API_KEY;
+        if (!apiKey) {
+            return new Response(JSON.stringify({ error: "Falta la variable de entorno GEMINI_API_KEY" }), { status: 500 });
+        }
 
         const response = await fetch(
             `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,

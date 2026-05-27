@@ -179,16 +179,45 @@ async function sendMessage() {
     addMessage("Tú: " + message, "user");
     input.value = "";
 
-    // Armar el prompt contextual dinámico con los números en tiempo real
-    const systemPrompt = `Eres un experto en contaduría en México. Responde de forma concisa analizando la tabla.
-Sueldo Inicial: $${datosCalculados.inputs.sueldoInicial} | Bono: $${datosCalculados.inputs.aumentoBono}
-Ahorros en Deducciones (E2 vs E3):
-- ISR: $${datosCalculados.diferencias.isr} | IMSS Obrero: $${datosCalculados.diferencias.imss}
-- Ganancia Extra Neta: $${datosCalculados.diferencias.neto} | Ahorro Patronal: $${datosCalculados.diferencias.patronal}
+    // Tu versión detallada del prompt (La que funciona mejor)
+    const systemPrompt = `Eres un expert en contaduría y gestión empresarial en México. Tu único propósito es responder dudas analizando la tabla comparativa que el usuario está visualizando en su pantalla. 
+
+VALORES DE ENTRADA INTRODUCIDOS POR EL USUARIO: 
+- Sueldo Bruto Inicial Mensual: $${datosCalculados.inputs.sueldoInicial} 
+- Cantidad a Aumentar / Bono: $${datosCalculados.inputs.aumentoBono} 
+
+MÉTRICAS FISCALES ACTUALES DE LA TABLA (Calculadas dinámicamente): 
+1. ESCENARIO 1 (Salario Inicial Base): 
+   - Sueldo Bruto Base: $${datosCalculados.e1.sbBase} | Vales: $${datosCalculados.e1.vales} | Fondo de Ahorro: $${datosCalculados.e1.fondo} 
+   - Sueldo Bruto Total: $${datosCalculados.e1.sbTotal} 
+   - Retenciones: ISR: $${datosCalculados.e1.isr} , IMSS Obrero (1.63%): $${datosCalculados.e1.imss} 
+   - Suma Deducciones: $${datosCalculados.e1.deducciones} 
+   - SUELDO NETO FINAL: $${datosCalculados.e1.neto} 
+   - Cuota IMSS Patronal (14%): $${datosCalculados.e1.patronal} 
+
+2. ESCENARIO 2 (Aumento Directo al Bruto): 
+   - Sueldo Bruto Base: $${datosCalculados.e2.sbBase} | Vales: $${datosCalculados.e2.vales} | Fondo de Ahorro: $${datosCalculados.e2.fondo} 
+   - Sueldo Bruto Total: $${datosCalculados.e2.sbTotal} 
+   - Retenciones: ISR: $${datosCalculados.e2.isr} , IMSS Obrero (1.63%): $${datosCalculados.e2.imss} 
+   - Suma Deducciones: $${datosCalculados.e2.deducciones} 
+   - SUELDO NETO FINAL: $${datosCalculados.e2.neto} 
+   - Cuota IMSS Patronal (14%): $${datosCalculados.e2.patronal} 
+
+3. ESCENARIO 3 (Optimizado Fiscal con Vales y Fondo): 
+   - Sueldo Bruto Base: $${datosCalculados.e3.sbBase} | Vales (Exentos): $${datosCalculados.e3.vales} | Fondo de Ahorro (Exento): $${datosCalculados.e3.fondo} 
+   - Sueldo Bruto Total: $${datosCalculados.e3.sbTotal} 
+   - Retenciones: ISR: $${datosCalculados.e3.isr} , IMSS Obrero (1.63%): $${datosCalculados.e3.imss} 
+   - Suma Deducciones: $${datosCalculados.e3.deducciones} 
+   - SUELDO NETO FINAL: $${datosCalculados.e3.neto} 
+   - Cuota IMSS Patronal (14%): $${datosCalculados.e3.patronal} 
+
+REGLAS DE RESPUESTA INTERNA: 
+- Responde de forma concisa y directa basándote en los datos de arriba. 
+- Si el usuario te pregunta por el "sueldo inicial", el "bono" o el desglose de los montos, haz mención explícita a los valores de entrada ($${datosCalculados.inputs.sueldoInicial} inicial y $${datosCalculados.inputs.aumentoBono} de bono) para demostrar que estás leyendo las cajas de texto de la aplicación. 
+- Limítate estrictamente a proveer consultoría del área de contaduría, nóminas y estrategias de optimización fiscal.
 Pregunta del usuario: ${message}`;
 
     try {
-        // RUTA RELATIVA SEGURA: Redirige de forma oculta a los servidores de Netlify/Vercel
         const response = await fetch("/preguntarContador", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -197,12 +226,11 @@ Pregunta del usuario: ${message}`;
         
         const data = await response.json();
         const botReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Sin respuesta";
-        addMessage("Contador 👨🏻‍💼: " + botReply, "bot");
-    } catch (error) {
-        addMessage("Contador 👨🏻‍💼: Error de conexión con el servidor", "bot");
+        addMessage("Contador 👨💼: " + botReply, "bot");
+    }catch (error) {
+        addMessage("Contador 👨💼: Error de conexión con el servidor", "bot");
     }
 }
-
 // Permitir enviar el chat usando Ctrl+Enter
 document.getElementById('user-input').addEventListener('keydown', function(e) {
     if (e.key === 'Enter' && e.ctrlKey) {
