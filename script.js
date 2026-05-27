@@ -88,11 +88,7 @@ function calcularNomina() {
     const e3_neto = +(e3_sbtotal - e3_deducciones).toFixed(2);
     const e3_patronal = +(e3_sb * TASA_IMSS_PATRONAL).toFixed(2);
 
-    // --- CÁLCULO DE DIFERENCIAS (Escenario 2 vs Escenario 3) ---
-    const dif_sb = +(e2_sb - e3_sb).toFixed(2);
-    const dif_vales = +(e2_vales - e3_vales).toFixed(2);
-    const dif_fondo = +(e2_fondo - e3_fondo).toFixed(2);
-    const dif_sbtotal = +(e2_sbtotal - e3_sbtotal).toFixed(2);
+    // --- CÁLCULO DE DIFERENCIAS EXCLUSIVO DESDE DEDUCCIONES (Escenario 2 vs Escenario 3) ---
     const dif_isr = +(e2_isr - e3_isr).toFixed(2);
     const dif_imss = +(e2_imss - e3_imss).toFixed(2);
     const dif_deducciones = +(e2_deducciones - e3_deducciones).toFixed(2);
@@ -103,7 +99,7 @@ function calcularNomina() {
     datosCalculados = {
         inputs: { sueldoInicial: sbInicial, aumentoBono: aumento },
         config: { topeVales: TOPE_VALES, topeFondo: TOPE_FONDO, imssObreroTasa: "1.63%", imssPatronalTasa: "14%" },
-        diferencias: { sb: dif_sb, vales: dif_vales, fondo: dif_fondo, isr: dif_isr, imss: dif_imss, totalDeducciones: dif_deducciones, neto: dif_neto, patronal: dif_patronal },
+        diferencias: { isr: dif_isr, imss: dif_imss, totalDeducciones: dif_deducciones, neto: dif_neto, patronal: dif_patronal },
         e1: { sbBase: e1_sb, vales: e1_vales, fondo: e1_fondo, sbTotal: e1_sbtotal, isr: e1_isr, imss: e1_imss, deducciones: e1_deducciones, neto: e1_neto, patronal: e1_patronal },
         e2: { sbBase: e2_sb, vales: e2_vales, fondo: e2_fondo, sbTotal: e2_sbtotal, isr: e2_isr, imss: e2_imss, deducciones: e2_deducciones, neto: e2_neto, patronal: e2_patronal },
         e3: { sbBase: e3_sb, vales: e3_vales, fondo: e3_fondo, sbTotal: e3_sbtotal, isr: e3_isr, imss: e3_imss, deducciones: e3_deducciones, neto: e3_neto, patronal: e3_patronal }
@@ -142,11 +138,7 @@ function calcularNomina() {
     document.getElementById('e3-neto').innerText = formatearMoneda(e3_neto);
     document.getElementById('e3-patronal').innerText = formatearMoneda(e3_patronal);
 
-    // Renderizado de la columna de Diferencias
-    document.getElementById('dif-sb').innerText = formatearMoneda(dif_sb);
-    document.getElementById('dif-vales').innerText = formatearMoneda(Math.abs(dif_vales));
-    document.getElementById('dif-fondo').innerText = formatearMoneda(Math.abs(dif_fondo));
-    document.getElementById('dif-total-s').innerText = formatearMoneda(dif_sbtotal);
+    // Renderizado de la columna de Diferencias (Solo Deducciones)
     document.getElementById('dif-isr').innerText = formatearMoneda(dif_isr);
     document.getElementById('dif-imss').innerText = formatearMoneda(dif_imss);
     document.getElementById('dif-suma-ded').innerText = formatearMoneda(dif_deducciones);
@@ -204,11 +196,11 @@ async function sendMessage() {
 VALORES DE ENTRADA:
 - Sueldo Bruto Inicial: $${datosCalculados.inputs.sueldoInicial} | Bono/Aumento: $${datosCalculados.inputs.aumentoBono}
 
-DIFERENCIAS DIRECTAS (AHORROS CALCULADOS ENTRE ESCENARIO 2 Y ESCENARIO 3):
+DIFERENCIAS DIRECTAS EXCLUSIVAS DE DEDUCCIONES (ESCENARIO 2 VS ESCENARIO 3):
 - Ahorro en Retención de ISR: $${datosCalculados.diferencias.isr} menos retenido al trabajador.
 - Ahorro en IMSS Obrero: $${datosCalculados.diferencias.imss} menos retenido al trabajador.
-- Reducción total de deducciones: $${datosCalculados.diferencias.totalDeducciones}
-- Ganancia Extra Neta en Efectivo (Sueldo Neto): $${datosCalculados.diferencias.neto} más para el empleado.
+- Reducción total de deducciones obreras: $${datosCalculados.diferencias.totalDeducciones}
+- Ganancia Extra Neta en Efectivo (Sueldo Neto percibido): $${datosCalculados.diferencias.neto} más para el empleado.
 - Ahorro en Cuota IMSS Patronal: $${datosCalculados.diferencias.patronal} ahorrados por la empresa.
 
 MÉTRICAS COMPLETAS DE LA TABLA:
@@ -218,7 +210,7 @@ MÉTRICAS COMPLETAS DE LA TABLA:
 
 REGLAS DE RESPUESTA INTERNA:
 - Responde de forma concisa basándote en los datos calculados.
-- Si preguntan por ahorros o diferencias de dinero de impuestos, cita explícitamente los montos calculados (ej. El ahorro de ISR es de $${datosCalculados.diferencias.isr}).
+- Concéntrate en explicar los ahorros de dinero o diferencias de impuestos citando los montos (ej. El ahorro de ISR es de $${datosCalculados.diferencias.isr}).
 - Limítate estrictamente al área de contaduría y optimización fiscal.
 
 Pregunta del usuario: ${message}`;
