@@ -1,5 +1,3 @@
-const API_KEY = "AIzaSyAojmwbw6s-uDz-upnVBhYqxkmxkp4N75U";
-
 const TOPE_VALES = 1376.00;
 const TOPE_FONDO = 4471.00;
 const TASA_IMSS_OBRERO = 0.0163;
@@ -100,7 +98,6 @@ function calcularNomina() {
         e3: { sbBase: e3_sb, vales: e3_vales, fondo: e3_fondo, sbTotal: e3_sbtotal, isr: e3_isr, imss: e3_imss, deducciones: e3_deducciones, neto: e3_neto, patronal: e3_patronal }
     };
 
-    // Render E1
     document.getElementById('e1-sb').innerText = formatearMoneda(e1_sb);
     document.getElementById('e1-vales').innerText = formatearMoneda(e1_vales);
     document.getElementById('e1-fondo').innerText = formatearMoneda(e1_fondo);
@@ -111,7 +108,6 @@ function calcularNomina() {
     document.getElementById('e1-neto').innerText = formatearMoneda(e1_neto);
     document.getElementById('e1-patronal').innerText = formatearMoneda(e1_patronal);
 
-    // Render E2
     document.getElementById('e2-sb').innerText = formatearMoneda(e2_sb);
     document.getElementById('e2-vales').innerText = formatearMoneda(e2_vales);
     document.getElementById('e2-fondo').innerText = formatearMoneda(e2_fondo);
@@ -122,7 +118,6 @@ function calcularNomina() {
     document.getElementById('e2-neto').innerText = formatearMoneda(e2_neto);
     document.getElementById('e2-patronal').innerText = formatearMoneda(e2_patronal);
 
-    // Render E3
     document.getElementById('e3-sb').innerText = formatearMoneda(e3_sb);
     document.getElementById('e3-vales').innerText = formatearMoneda(e3_vales);
     document.getElementById('e3-fondo').innerText = formatearMoneda(e3_fondo);
@@ -133,7 +128,6 @@ function calcularNomina() {
     document.getElementById('e3-neto').innerText = formatearMoneda(e3_neto);
     document.getElementById('e3-patronal').innerText = formatearMoneda(e3_patronal);
 
-    // Render Diferencias (Solo Deducciones)
     document.getElementById('dif-isr').innerText = formatearMoneda(dif_isr);
     document.getElementById('dif-imss').innerText = formatearMoneda(dif_imss);
     document.getElementById('dif-suma-ded').innerText = formatearMoneda(dif_deducciones);
@@ -179,16 +173,17 @@ Ahorros en Deducciones (E2 vs E3):
 Pregunta del usuario: ${message}`;
 
     try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`, {
+        // Apuntamos a la Cloud Function de Firebase de forma segura e interna
+        const response = await fetch("/preguntarContador", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ contents: [{ parts: [{ text: systemPrompt }] }] })
+            body: JSON.stringify({ systemPrompt: systemPrompt })
         });
         const data = await response.json();
         const botReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Sin respuesta";
         addMessage("Contador 👨🏻‍💼: " + botReply, "bot");
     } catch (error) {
-        addMessage("Contador 👨🏻‍💼: Error de conexión", "bot");
+        addMessage("Contador 👨🏻‍💼: Error de conexión con el servidor", "bot");
     }
 }
 
