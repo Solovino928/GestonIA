@@ -1,3 +1,6 @@
+// ==========================================================================
+// CONFIGURACIÓN Y CONSTANTES DE LA NÓMINA (MÉXICO 2026)
+// ==========================================================================
 const TOPE_VALES = 1376.00;
 const TOPE_FONDO = 4471.00;
 const TASA_IMSS_OBRERO = 0.0163;
@@ -5,9 +8,11 @@ const TASA_IMSS_PATRONAL = 0.14;
 
 let datosCalculados = {};
 
+// Escuchar los cambios en los inputs de la calculadora
 document.getElementById('sueldo-bruto-input').addEventListener('input', calcularNomina);
 document.getElementById('aumento-input').addEventListener('input', calcularNomina);
 
+// Tabla de ISR Mensual Actualizada
 const TABLA_ISR_MENSUAL = [
     { limiteInferior: 0.01,   limiteSuperior: 844.59,   cuotaFija: 0.00,     porcentaje: 1.92 },
     { limiteInferior: 844.60,  limiteSuperior: 7168.51,  cuotaFija: 16.22,    porcentaje: 6.40 },
@@ -22,6 +27,9 @@ const TABLA_ISR_MENSUAL = [
     { limiteInferior: 425642.00,limiteSuperior: Infinity, cuotaFija: 133488.54,porcentaje: 35.00 }
 ];
 
+// ==========================================================================
+// LÓGICA DE CÁLCULO MATEMÁTICO
+// ==========================================================================
 function calcularISRReal(sueldoBruto) {
     if (!sueldoBruto || sueldoBruto <= 0) return 0;
     let rangoEncontrado = TABLA_ISR_MENSUAL[TABLA_ISR_MENSUAL.length - 1];
@@ -46,7 +54,7 @@ function calcularNomina() {
     const sbInicial = parseFloat(document.getElementById('sueldo-bruto-input').value) || 0;
     const aumento = parseFloat(document.getElementById('aumento-input').value) || 0;
 
-    // ESCENARIO 1
+    // --- ESCENARIO 1: Salario Base ---
     const e1_sb = sbInicial;
     const e1_vales = 0;
     const e1_fondo = 0;
@@ -57,7 +65,7 @@ function calcularNomina() {
     const e1_neto = +(e1_sbtotal - e1_deducciones).toFixed(2);
     const e1_patronal = +(e1_sb * TASA_IMSS_PATRONAL).toFixed(2);
 
-    // ESCENARIO 2
+    // --- ESCENARIO 2: Aumento Directo al Salario ---
     const e2_sb = sbInicial + aumento;
     const e2_vales = 0;
     const e2_fondo = 0;
@@ -68,7 +76,7 @@ function calcularNomina() {
     const e2_neto = +(e2_sbtotal - e2_deducciones).toFixed(2);
     const e2_patronal = +(e2_sb * TASA_IMSS_PATRONAL).toFixed(2);
 
-    // ESCENARIO 3
+    // --- ESCENARIO 3: Optimización Fiscal Inteligente ---
     let restoAumento = aumento;
     const e3_vales = Math.min(restoAumento, TOPE_VALES);
     restoAumento -= e3_vales;
@@ -83,13 +91,14 @@ function calcularNomina() {
     const e3_neto = +(e3_sbtotal - e3_deducciones).toFixed(2);
     const e3_patronal = +(e3_sb * TASA_IMSS_PATRONAL).toFixed(2);
 
-    // DIFERENCIAS EXCLUSIVAS DE DEDUCCIONES (Escenario 2 vs Escenario 3)
+    // --- CÁLCULO DE DIFERENCIAS (Escenario 2 vs Escenario 3) ---
     const dif_isr = +(e2_isr - e3_isr).toFixed(2);
     const dif_imss = +(e2_imss - e3_imss).toFixed(2);
     const dif_deducciones = +(e2_deducciones - e3_deducciones).toFixed(2);
     const dif_patronal = +(e2_patronal - e3_patronal).toFixed(2);
     const dif_neto = +(e3_neto - e2_neto).toFixed(2);
 
+    // Guardar el estado global para que la Inteligencia Artificial lo lea
     datosCalculados = {
         inputs: { sueldoInicial: sbInicial, aumentoBono: aumento },
         diferencias: { isr: dif_isr, imss: dif_imss, totalDeducciones: dif_deducciones, neto: dif_neto, patronal: dif_patronal },
@@ -98,6 +107,7 @@ function calcularNomina() {
         e3: { sbBase: e3_sb, vales: e3_vales, fondo: e3_fondo, sbTotal: e3_sbtotal, isr: e3_isr, imss: e3_imss, deducciones: e3_deducciones, neto: e3_neto, patronal: e3_patronal }
     };
 
+    // --- RENDERIZADO VISUAL EN LA TABLA ---
     document.getElementById('e1-sb').innerText = formatearMoneda(e1_sb);
     document.getElementById('e1-vales').innerText = formatearMoneda(e1_vales);
     document.getElementById('e1-fondo').innerText = formatearMoneda(e1_fondo);
@@ -135,8 +145,12 @@ function calcularNomina() {
     document.getElementById('dif-patronal').innerText = formatearMoneda(dif_patronal);
 }
 
+// Ejecutar cálculo automático al cargar la página por primera vez
 calcularNomina();
 
+// ==========================================================================
+// INTERFAZ DE GESTIONIA (CHAT INTEGRADO)
+// ==========================================================================
 const chatBox = document.getElementById("chat-box");
 
 function escapeHTML(text) {
@@ -165,6 +179,7 @@ async function sendMessage() {
     addMessage("Tú: " + message, "user");
     input.value = "";
 
+    // Armar el prompt contextual dinámico con los números en tiempo real
     const systemPrompt = `Eres un experto en contaduría en México. Responde de forma concisa analizando la tabla.
 Sueldo Inicial: $${datosCalculados.inputs.sueldoInicial} | Bono: $${datosCalculados.inputs.aumentoBono}
 Ahorros en Deducciones (E2 vs E3):
@@ -173,12 +188,13 @@ Ahorros en Deducciones (E2 vs E3):
 Pregunta del usuario: ${message}`;
 
     try {
-        // Apuntamos a la Cloud Function de Firebase de forma segura e interna
+        // RUTA RELATIVA SEGURA: Redirige de forma oculta a los servidores de Netlify/Vercel
         const response = await fetch("/preguntarContador", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ systemPrompt: systemPrompt })
         });
+        
         const data = await response.json();
         const botReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Sin respuesta";
         addMessage("Contador 👨🏻‍💼: " + botReply, "bot");
@@ -187,6 +203,7 @@ Pregunta del usuario: ${message}`;
     }
 }
 
+// Permitir enviar el chat usando Ctrl+Enter
 document.getElementById('user-input').addEventListener('keydown', function(e) {
     if (e.key === 'Enter' && e.ctrlKey) {
         e.preventDefault();
