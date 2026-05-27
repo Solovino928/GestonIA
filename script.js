@@ -89,7 +89,6 @@ function calcularNomina() {
     const e3_patronal = +(e3_sb * TASA_IMSS_PATRONAL).toFixed(2);
 
     // --- CÁLCULO DE DIFERENCIAS (Escenario 2 vs Escenario 3) ---
-    // En impuestos/costos: E2 - E3 positivo representa ahorro (menos dinero pagado)
     const dif_sb = +(e2_sb - e3_sb).toFixed(2);
     const dif_vales = +(e2_vales - e3_vales).toFixed(2);
     const dif_fondo = +(e2_fondo - e3_fondo).toFixed(2);
@@ -98,7 +97,6 @@ function calcularNomina() {
     const dif_imss = +(e2_imss - e3_imss).toFixed(2);
     const dif_deducciones = +(e2_deducciones - e3_deducciones).toFixed(2);
     const dif_patronal = +(e2_patronal - e3_patronal).toFixed(2);
-    // En neto: E3 - E2 representa el dinero extra libre que se queda el trabajador
     const dif_neto = +(e3_neto - e2_neto).toFixed(2);
 
     // Persistencia del estado global sincronizado para la IA
@@ -144,9 +142,9 @@ function calcularNomina() {
     document.getElementById('e3-neto').innerText = formatearMoneda(e3_neto);
     document.getElementById('e3-patronal').innerText = formatearMoneda(e3_patronal);
 
-    // Renderizado de la columna de Diferencias Dinámicas
+    // Renderizado de la columna de Diferencias
     document.getElementById('dif-sb').innerText = formatearMoneda(dif_sb);
-    document.getElementById('dif-vales').innerText = formatearMoneda(Math.abs(dif_vales)); // Despliegue absoluto para coherencia visual
+    document.getElementById('dif-vales').innerText = formatearMoneda(Math.abs(dif_vales));
     document.getElementById('dif-fondo').innerText = formatearMoneda(Math.abs(dif_fondo));
     document.getElementById('dif-total-s').innerText = formatearMoneda(dif_sbtotal);
     document.getElementById('dif-isr').innerText = formatearMoneda(dif_isr);
@@ -154,12 +152,6 @@ function calcularNomina() {
     document.getElementById('dif-suma-ded').innerText = formatearMoneda(dif_deducciones);
     document.getElementById('dif-neto').innerText = formatearMoneda(dif_neto);
     document.getElementById('dif-patronal').innerText = formatearMoneda(dif_patronal);
-
-    // Renderizado de la tarjeta informativa inferior
-    const elementoCard = document.getElementById('diferencia-neto-card');
-    if (elementoCard) {
-        elementoCard.innerText = formatearMoneda(dif_neto);
-    }
 }
 
 // Inicializar limpio
