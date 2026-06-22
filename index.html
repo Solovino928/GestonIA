@@ -7,17 +7,20 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
+        <h2><p style="text-align: center;">Administración de las Compensaciones</p></h2>
+        <h2><p style="text-align: center;">Calculadora comparativa entre</p></h2>
+        <h2><p style="text-align: center;">Incremento Salarial en Efectivo y Prestaciones</p></h2>
+        <h2><p style="text-align: center;">(Vales de Despensa y Fondo de Ahorro)</p></h2> 
     <div class="calculator-container">
-        <h1>Calculadora Comparativa de Sueldos</h1>
+        <h1>Calculadora Comparativa de Sueldos</h1> 
 
         <div class="form-group">
             <div class="input-field">
-                <label for="sueldo-bruto-input">Sueldo Bruto Inicial (Mensual):</label>
+                <label for="sueldo-bruto-input">Sueldo Bruto Mensual:</label>
                 <input type="number" id="sueldo-bruto-input" value="18200" step="100">
             </div>
             <div class="input-field">
-                <label for="aumento-input">Cantidad a Aumentar / Bono:</label>
+                <label for="aumento-input">Cantidad a Aumentar:</label>
                 <input type="number" id="aumento-input" value="4004" step="100">
             </div>
         </div>
@@ -27,15 +30,15 @@
                 <thead>
                     <tr>
                         <th>Concepto</th>
-                        <th>Escenario 1<br><small>()</small></th>
-                        <th>Escenario 2<br><small>()</small></th>
-                        <th>Escenario 3<br><small>()</small></th>
+                        <th>Base<br></th>
+                        <th>Escenario 1<br></th>
+                        <th>Escenario 2<br></th>
                         <th>Diferencia<br><small></small></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><strong>Sueldo Bruto Base</strong></td>
+                        <td><strong>Sueldo Bruto</strong></td>
                         <td id="e1-sb">$18,200.00</td>
                         <td id="e2-sb">$22,204.00</td>
                         <td id="e3-sb">$18,200.00</td>
@@ -73,7 +76,7 @@
                         <td id="dif-isr" class="dif-col Ahorro">$0.00</td>
                     </tr>
                     <tr>
-                        <td>* IMSS Obrero (1.63%)</td>
+                        <td>* IMSS Cuota Obrero (1.63%)</td>
                         <td id="e1-imss">$305.76</td>
                         <td id="e2-imss">$373.03</td>
                         <td id="e3-imss">$305.76</td>
@@ -94,7 +97,7 @@
                         <td id="dif-neto" class="dif-col beneficio-empleado">$0.00</td>
                     </tr>
                     <tr>
-                        <td class="patronal-row">Cuota IMSS Patronal (14%)</td>
+                        <td class="patronal-row">IMSS Cuota Patronal (14%)</td>
                         <td id="e1-patronal" class="patronal-row">$2,548.00</td>
                         <td id="e2-patronal" class="patronal-row">$3,108.56</td>
                         <td id="e3-patronal" class="patronal-row">$2,548.00</td>
@@ -102,13 +105,15 @@
                     </tr>
                 </tbody>
             </table>
+            <h4>Nota: Atender los limites establecidos en las leyes del ISR e IMSS</h4>
+            <h4>sobre topes para no gravar las prestaciones.</h4>
         </div>
     </div>
 
     <hr class="separator">
 
     <div class="chat-container">
-        <h1>GestionIA</h1>
+        <h1>GestiónIA</h1>
         <div id="chat-box"></div>
         <div class="input-area">
             <textarea id="user-input" rows="3" placeholder="Escribe tu mensaje aquí. Presiona Ctrl+Enter para enviar..."></textarea>

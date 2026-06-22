@@ -187,7 +187,7 @@ VALORES DE ENTRADA INTRODUCIDOS POR EL USUARIO:
 - Cantidad a Aumentar / Bono: $${datosCalculados.inputs.aumentoBono} 
 
 MÉTRICAS FISCALES ACTUALES DE LA TABLA (Calculadas dinámicamente): 
-1. ESCENARIO 1 (Salario Inicial Base): 
+1. Base (Salario Inicial Base): 
    - Sueldo Bruto Base: $${datosCalculados.e1.sbBase} | Vales: $${datosCalculados.e1.vales} | Fondo de Ahorro: $${datosCalculados.e1.fondo} 
    - Sueldo Bruto Total: $${datosCalculados.e1.sbTotal} 
    - Retenciones: ISR: $${datosCalculados.e1.isr} , IMSS Obrero (1.63%): $${datosCalculados.e1.imss} 
@@ -195,7 +195,7 @@ MÉTRICAS FISCALES ACTUALES DE LA TABLA (Calculadas dinámicamente):
    - SUELDO NETO FINAL: $${datosCalculados.e1.neto} 
    - Cuota IMSS Patronal (14%): $${datosCalculados.e1.patronal} 
 
-2. ESCENARIO 2 (Aumento Directo al Bruto): 
+2. ESCENARIO 1 (Aumento Directo al Bruto): 
    - Sueldo Bruto Base: $${datosCalculados.e2.sbBase} | Vales: $${datosCalculados.e2.vales} | Fondo de Ahorro: $${datosCalculados.e2.fondo} 
    - Sueldo Bruto Total: $${datosCalculados.e2.sbTotal} 
    - Retenciones: ISR: $${datosCalculados.e2.isr} , IMSS Obrero (1.63%): $${datosCalculados.e2.imss} 
@@ -203,7 +203,7 @@ MÉTRICAS FISCALES ACTUALES DE LA TABLA (Calculadas dinámicamente):
    - SUELDO NETO FINAL: $${datosCalculados.e2.neto} 
    - Cuota IMSS Patronal (14%): $${datosCalculados.e2.patronal} 
 
-3. ESCENARIO 3 (Optimizado Fiscal con Vales y Fondo): 
+3. ESCENARIO 2 (Optimizado Fiscal con Vales y Fondo): 
    - Sueldo Bruto Base: $${datosCalculados.e3.sbBase} | Vales (Exentos): $${datosCalculados.e3.vales} | Fondo de Ahorro (Exento): $${datosCalculados.e3.fondo} 
    - Sueldo Bruto Total: $${datosCalculados.e3.sbTotal} 
    - Retenciones: ISR: $${datosCalculados.e3.isr} , IMSS Obrero (1.63%): $${datosCalculados.e3.imss} 
