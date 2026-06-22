@@ -98,10 +98,27 @@ function calcularNomina() {
     const dif_patronal = +(e2_patronal - e3_patronal).toFixed(2);
     const dif_neto = +(e3_neto - e2_neto).toFixed(2);
 
+    // Función utilidad: formatea el cambio porcentual entre dos valores (nuevo vs anterior)
+    function formatPorcentajeCambio(nuevo, anterior) {
+        if (!anterior || anterior === 0) return 'N/A';
+        const pct = ((nuevo - anterior) / Math.abs(anterior)) * 100;
+        const sign = pct > 0 ? '+' : '';
+        return sign + pct.toFixed(2) + '%';
+    }
+
     // Guardar el estado global para que la Inteligencia Artificial lo lea
     datosCalculados = {
         inputs: { sueldoInicial: sbInicial, aumentoBono: aumento },
-        diferencias: { isr: dif_isr, imss: dif_imss, totalDeducciones: dif_deducciones, neto: dif_neto, patronal: dif_patronal },
+        diferencias: { 
+            isr: dif_isr, imss: dif_imss, totalDeducciones: dif_deducciones, neto: dif_neto, patronal: dif_patronal,
+            pct: {
+                isr: (e2_isr === 0) ? null : +(((e3_isr - e2_isr) / Math.abs(e2_isr)) * 100).toFixed(2),
+                imss: (e2_imss === 0) ? null : +(((e3_imss - e2_imss) / Math.abs(e2_imss)) * 100).toFixed(2),
+                totalDeducciones: (e2_deducciones === 0) ? null : +(((e3_deducciones - e2_deducciones) / Math.abs(e2_deducciones)) * 100).toFixed(2),
+                neto: (e2_neto === 0) ? null : +(((e3_neto - e2_neto) / Math.abs(e2_neto)) * 100).toFixed(2),
+                patronal: (e2_patronal === 0) ? null : +(((e3_patronal - e2_patronal) / Math.abs(e2_patronal)) * 100).toFixed(2)
+            }
+        },
         e1: { sbBase: e1_sb, vales: e1_vales, fondo: e1_fondo, sbTotal: e1_sbtotal, isr: e1_isr, imss: e1_imss, deducciones: e1_deducciones, neto: e1_neto, patronal: e1_patronal },
         e2: { sbBase: e2_sb, vales: e2_vales, fondo: e2_fondo, sbTotal: e2_sbtotal, isr: e2_isr, imss: e2_imss, deducciones: e2_deducciones, neto: e2_neto, patronal: e2_patronal },
         e3: { sbBase: e3_sb, vales: e3_vales, fondo: e3_fondo, sbTotal: e3_sbtotal, isr: e3_isr, imss: e3_imss, deducciones: e3_deducciones, neto: e3_neto, patronal: e3_patronal }
@@ -138,11 +155,12 @@ function calcularNomina() {
     document.getElementById('e3-neto').innerText = formatearMoneda(e3_neto);
     document.getElementById('e3-patronal').innerText = formatearMoneda(e3_patronal);
 
-    document.getElementById('dif-isr').innerText = formatearMoneda(dif_isr);
-    document.getElementById('dif-imss').innerText = formatearMoneda(dif_imss);
-    document.getElementById('dif-suma-ded').innerText = formatearMoneda(dif_deducciones);
-    document.getElementById('dif-neto').innerText = formatearMoneda(dif_neto);
-    document.getElementById('dif-patronal').innerText = formatearMoneda(dif_patronal);
+    // Mostrar porcentajes de diferencia (Escenario 3 vs Escenario 2)
+    document.getElementById('dif-isr').innerText = formatPorcentajeCambio(e3_isr, e2_isr);
+    document.getElementById('dif-imss').innerText = formatPorcentajeCambio(e3_imss, e2_imss);
+    document.getElementById('dif-suma-ded').innerText = formatPorcentajeCambio(e3_deducciones, e2_deducciones);
+    document.getElementById('dif-neto').innerText = formatPorcentajeCambio(e3_neto, e2_neto);
+    document.getElementById('dif-patronal').innerText = formatPorcentajeCambio(e3_patronal, e2_patronal);
 }
 
 // Ejecutar cálculo automático al cargar la página por primera vez
